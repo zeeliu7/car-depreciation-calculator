@@ -140,7 +140,7 @@ def transform_csv(input_file_path):
     print(f"Removed {invalid_count} invalid rows")
 
     # Drop unnecessary columns
-    columns_to_drop = ['brand', 'model', 'engine', 'ext_col', 'int_col']
+    columns_to_drop = ['brand', 'model', 'model_year', 'engine', 'ext_col', 'int_col']
     # Only drop columns that exist to avoid KeyError
     existing_columns_to_drop = [col for col in columns_to_drop if col in transformed_df.columns]
     transformed_df = transformed_df.drop(existing_columns_to_drop, axis=1)
