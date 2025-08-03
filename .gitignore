@@ -3,6 +3,10 @@
 .env.local
 .env.production
 
+# AWS key
+*.pem
+*.pem:Zone.Identifier
+
 # Python
 __pycache__/
 *.py[cod]

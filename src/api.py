@@ -61,6 +61,19 @@ def calculate_depreciation_constant(current_value: float, selling_price: float,
         logger.error(f"Error calculating depreciation constant: {str(e)}")
         return 0.0
 
+def calculate_future_value(current_value: float, depreciation_constant: float, years_ahead: int) -> float:
+    """Calculate future value using exponential depreciation: V(t) = V_0 * e^(-k*t)"""
+    try:
+        if current_value <= 0 or years_ahead < 0:
+            return 0.0
+        
+        future_value = current_value * np.exp(-depreciation_constant * years_ahead)
+        return max(0.0, float(future_value))  # Ensure non-negative
+        
+    except Exception as e:
+        logger.error(f"Error calculating future value: {str(e)}")
+        return 0.0
+
 # Pydantic models for request/response
 class PredictionRequest(BaseModel):
     mileage: int = Field(..., ge=0, le=500000, description="Car mileage in miles")
@@ -69,6 +82,46 @@ class PredictionRequest(BaseModel):
     accident: str = Field(..., description="Accident history (Yes/No/Unknown)")
     clean_title: str = Field(..., description="Clean title status (Yes/No)")
     model_year: int = Field(..., ge=1900, le=CURRENT_YEAR, description="Car model year")
+    
+    @field_validator('fuel_type')
+    @classmethod
+    def validate_fuel_type(cls, v):
+        allowed_types = ["Gasoline", "Hybrid", "Diesel", "Plug-In Hybrid", "E85 Flex Fuel", "Others"]
+        if v not in allowed_types:
+            raise ValueError(f'fuel_type must be one of: {allowed_types}')
+        return v
+    
+    @field_validator('transmission')
+    @classmethod
+    def validate_transmission(cls, v):
+        allowed_types = ['Automatic', 'Manual', 'CVT', 'Dual Switch', 'Overdrive Switch', 'Others']
+        if v not in allowed_types:
+            raise ValueError(f'transmission must be one of: {allowed_types}')
+        return v
+    
+    @field_validator('accident')
+    @classmethod
+    def validate_accident(cls, v):
+        if v not in ['Yes', 'No', 'Unknown']:
+            raise ValueError('Must be "Yes", "No", or "Unknown"')
+        return v
+    
+    @field_validator('clean_title')
+    @classmethod
+    def validate_clean_title(cls, v):
+        if v not in ['Yes', 'No']:
+            raise ValueError('Must be "Yes" or "No"')
+        return v
+
+class FuturePredictionRequest(BaseModel):
+    mileage: int = Field(..., ge=0, le=500000, description="Car mileage in miles")
+    fuel_type: str = Field(..., description="Type of fuel")
+    transmission: str = Field(..., description="Transmission type")
+    accident: str = Field(..., description="Accident history (Yes/No/Unknown)")
+    clean_title: str = Field(..., description="Clean title status (Yes/No)")
+    model_year: int = Field(..., ge=1900, le=CURRENT_YEAR, description="Car model year")
+    selling_price: float = Field(..., gt=0, description="Original selling price")
+    selling_year: int = Field(..., ge=1900, le=CURRENT_YEAR, description="Year when car was originally sold")
     
     @field_validator('fuel_type')
     @classmethod
@@ -144,6 +197,9 @@ class InsertDataRequest(BaseModel):
 class PredictionResponse(BaseModel):
     depreciation_constant: float = Field(..., description="Predicted depreciation constant")
     model_version: str = Field(..., description="Version of the model used")
+
+class FuturePredictionResponse(BaseModel):
+    data: str = Field(..., description="String summary of future price predictions")
 
 class InsertDataResponse(BaseModel):
     success: bool = Field(..., description="Whether the insert operation was successful")
@@ -247,7 +303,7 @@ async def lifespan(app: FastAPI):
 # Initialize FastAPI app
 app = FastAPI(
     title="Car Depreciation Prediction API",
-    description="API for predicting car depreciation constants using machine learning",
+    description="API for predicting car depreciation constants and future values using machine learning",
     version=model_version,
     lifespan=lifespan,
     docs_url="/docs",
@@ -300,9 +356,9 @@ async def health_check():
         cpi_data_loaded=bool(CPI_DATA)
     )
 
-# Main prediction endpoint
-@app.post("/api/predict", response_model=PredictionResponse)
-async def predict_depreciation(request: PredictionRequest):
+# Prediction endpoint for depreciation constant
+@app.post("/api/predict/constant", response_model=PredictionResponse)
+async def predict_depreciation_constant(request: PredictionRequest):
     """
     Predict car depreciation constant based on vehicle features
     
@@ -363,6 +419,92 @@ async def predict_depreciation(request: PredictionRequest):
         raise
     except Exception as e:
         logger.error(f"Unexpected error during prediction: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Internal server error: {str(e)}"
+        )
+
+# Future price predictions for 5 years
+@app.post("/api/predict/future", response_model=FuturePredictionResponse)
+async def predict_future_values(request: FuturePredictionRequest):
+    """
+    Predict future car values for the next 5 years based on selling price and depreciation constant
+    
+    - **mileage**: Current mileage of the vehicle
+    - **fuel_type**: Type of fuel (Gasoline, Hybrid, Diesel, Plug-In Hybrid, E85 Flex Fuel, Others)
+    - **transmission**: Transmission type (Automatic, Manual, CVT, Dual Switch, Overdrive Switch, Others)
+    - **accident**: Whether the car has accident history (Yes/No/Unknown)
+    - **clean_title**: Whether the car has a clean title (Yes/No)
+    - **model_year**: Model year of the vehicle (age will be calculated automatically)
+    - **selling_price**: Original selling price (e.g., $25,000 in 2020)
+    - **selling_year**: Year when car was originally sold (e.g., 2020)
+    """
+    global depreciation_system
+    
+    if depreciation_system is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Depreciation system not initialized"
+        )
+    
+    try:
+        # Calculate age from model year
+        age = calculate_age_from_model_year(request.model_year)
+        
+        # Prepare input features for prediction
+        input_features = {
+            'mileage': request.mileage,
+            'fuel_type': request.fuel_type,
+            'transmission': request.transmission,
+            'accident': request.accident,
+            'clean_title': request.clean_title,
+            'age': age
+        }
+        
+        logger.info(f"Received future prediction request: {input_features}")
+        
+        # Get depreciation constant prediction
+        depreciation_constant = depreciation_system.predict_depreciation(input_features)
+        
+        if depreciation_constant is None:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Depreciation constant prediction failed. Please check if the model is properly trained and available."
+            )
+        
+        # Calculate current value (2025) from selling price using depreciation formula
+        # V(t) = V_0 * e^(-k*t) where t is years since selling year
+        years_since_selling = CURRENT_YEAR - request.selling_year
+        current_value = request.selling_price * np.exp(-depreciation_constant * years_since_selling)
+        
+        # Calculate future values for next 5 years (2025-2029)
+        prediction_lines = []
+        prediction_lines.append(f"Future Value Predictions:")
+        prediction_lines.append(f"Original Price ({request.selling_year}): ${request.selling_price:,.2f}")
+        prediction_lines.append(f"Depreciation Constant: {depreciation_constant:.6f}")
+        prediction_lines.append(f"Current Value ({CURRENT_YEAR}): ${current_value:,.2f}")
+        prediction_lines.append("")
+        
+        for year_offset in range(0, 5):  # 2025-2029
+            future_year = CURRENT_YEAR + year_offset
+            years_from_selling = years_since_selling + year_offset
+            future_value = request.selling_price * np.exp(-depreciation_constant * years_from_selling)
+            percentage_of_original = (future_value / request.selling_price) * 100 if request.selling_price > 0 else 0
+            
+            prediction_lines.append(f"Year {future_year}: ${future_value:,.2f} ({percentage_of_original:.1f}% of original)")
+        
+        prediction_summary = "\n".join(prediction_lines)
+        
+        logger.info(f"Future prediction successful for depreciation constant: {depreciation_constant}")
+        
+        return FuturePredictionResponse(
+            data=prediction_summary
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Unexpected error during future prediction: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Internal server error: {str(e)}"
@@ -473,13 +615,15 @@ async def root():
         "endpoints": {
             "docs": "/docs",
             "health": "/health",
-            "predict": "/predict",
+            "predict_constant": "/predict/constant",
+            "predict_future": "/predict/future",
             "insert_data": "/data/insert"
         },
         "features": {
             "automatic_age_calculation": "Age calculated from model year",
             "inflation_adjustment": "Selling prices adjusted using CPI data",
-            "depreciation_calculation": "Automatic calculation using k = -ln(V_t / V_0) / t"
+            "depreciation_calculation": "Automatic calculation using k = -ln(V_t / V_0) / t",
+            "future_predictions": "5-year future value predictions using exponential depreciation model"
         }
     }
 
