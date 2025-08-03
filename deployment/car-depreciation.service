@@ -1,0 +1,18 @@
+[Unit]
+Description=Car Depreciation Prediction API
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/car-depreciation/src
+Environment=PATH=/opt/car-depreciation/venv/bin
+EnvironmentFile=/opt/car-depreciation/.env
+ExecStart=/opt/car-depreciation/venv/bin/uvicorn api:app --host 0.0.0.0 --port 8000 --workers 2
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

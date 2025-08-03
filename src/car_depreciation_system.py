@@ -6,10 +6,14 @@ import torch.optim as optim
 import numpy as np
 import io
 import pickle
+import os
+from dotenv import load_dotenv
 
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
 from typing import Dict, Any, Tuple
+
+load_dotenv()
 
 class DepreciationNN(nn.Module):
     """Neural Network for depreciation prediction"""
@@ -35,9 +39,17 @@ class DepreciationNN(nn.Module):
         return self.network(x)
 
 class CarDepreciationSystem:
-    def __init__(self, bucket_name: str, aws_region: str = 'us-east-1'):
-        self.bucket_name = bucket_name
+    def __init__(self, bucket_name: str = None, aws_region: str = None):
+        # Use environment variables if not provided - IAM role handles credentials automatically
+        self.bucket_name = bucket_name or os.getenv('S3_BUCKET_NAME')
+        aws_region = aws_region or os.getenv('AWS_REGION', 'us-east-1')
+        
+        if not self.bucket_name:
+            raise ValueError("S3_BUCKET_NAME must be provided or set in environment variables")
+        
+        # boto3 automatically uses IAM role attached to EC2 instance
         self.s3_client = boto3.client('s3', region_name=aws_region)
+        
         self.data_key = 'car_depreciation_data.parquet'
         self.model_key = 'depreciation_model.pth'
         self.scaler_key = 'feature_scaler.pkl'
