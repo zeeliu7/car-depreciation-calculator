@@ -1,4 +1,4 @@
-milage,fuel_type,transmission,accident,clean_title,age,depreciation_constant
+mileage,fuel_type,transmission,accident,clean_title,age,depreciation_constant
 79800,Gasoline,Automatic,No,Yes,12,0.0760892624813204
 300183,Gasoline,Automatic,Yes,Yes,19,0.0891249594673293
 35035,Hybrid,Automatic,No,No,5,0.1631668242452825

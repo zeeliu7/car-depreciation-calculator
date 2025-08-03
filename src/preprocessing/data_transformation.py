@@ -1,4 +1,5 @@
 # Original data from Kaggle: https://www.kaggle.com/datasets/taeefnajib/used-car-price-prediction-dataset
+# I did manually change 'milage' to 'mileage' after processing for consistency
 
 import pandas as pd
 import re
@@ -112,8 +113,8 @@ def transform_csv(input_file_path):
         if row['price'] <= 0:
             return False
             
-        # Model year should be reasonable (1900-2025)
-        if row['model_year'] < 1900 or row['model_year'] > 2025:
+        # Model year should be reasonable (1974-2024)
+        if row['model_year'] < 1974 or row['model_year'] > 2024:
             return False
             
         # Age should be non-negative
