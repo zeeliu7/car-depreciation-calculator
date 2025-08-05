@@ -7,8 +7,11 @@ import logging
 import json
 import numpy as np
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
 
-from src import CarDepreciationSystem
+from car_depreciation_system import CarDepreciationSystem
+
+load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -76,7 +79,7 @@ def calculate_future_value(current_value: float, depreciation_constant: float, y
 
 # Pydantic models for request/response
 class PredictionRequest(BaseModel):
-    mileage: int = Field(..., ge=0, le=500000, description="Car mileage in miles")
+    mileage: int = Field(..., ge=0, description="Car mileage in miles")
     fuel_type: str = Field(..., description="Type of fuel")
     transmission: str = Field(..., description="Transmission type")
     accident: str = Field(..., description="Accident history (Yes/No/Unknown)")
@@ -114,12 +117,12 @@ class PredictionRequest(BaseModel):
         return v
 
 class FuturePredictionRequest(BaseModel):
-    mileage: int = Field(..., ge=0, le=500000, description="Car mileage in miles")
+    mileage: int = Field(..., ge=0, description="Car mileage in miles")
     fuel_type: str = Field(..., description="Type of fuel")
     transmission: str = Field(..., description="Transmission type")
     accident: str = Field(..., description="Accident history (Yes/No/Unknown)")
     clean_title: str = Field(..., description="Clean title status (Yes/No)")
-    model_year: int = Field(..., ge=1900, le=CURRENT_YEAR, description="Car model year")
+    model_year: int = Field(..., ge=1970, le=CURRENT_YEAR, description="Car model year")
     selling_price: float = Field(..., gt=0, description="Original selling price")
     selling_year: int = Field(..., ge=1970, le=CURRENT_YEAR, description="Year when car was originally sold")
     
@@ -154,15 +157,15 @@ class FuturePredictionRequest(BaseModel):
         return v
 
 class InsertDataRequest(BaseModel):
-    mileage: int = Field(..., ge=0, le=500000, description="Car mileage in miles")
+    mileage: int = Field(..., ge=0, description="Car mileage in miles")
     fuel_type: str = Field(..., description="Type of fuel")
     transmission: str = Field(..., description="Transmission type")
     accident: str = Field(..., description="Accident history (Yes/No/Unknown)")
     clean_title: str = Field(..., description="Clean title status (Yes/No)")
-    model_year: int = Field(..., ge=1900, le=CURRENT_YEAR, description="Car model year")
+    model_year: int = Field(..., ge=1970, le=CURRENT_YEAR, description="Car model year")
     selling_price: float = Field(..., gt=0, description="Original selling price (before inflation adjustment)")
     current_price: float = Field(..., gt=0, description="Current market value")
-    transaction_year: Optional[int] = Field(None, ge=1900, le=CURRENT_YEAR, description="Year when car was originally sold (optional, defaults to model year)")
+    transaction_year: Optional[int] = Field(None, ge=1970, le=CURRENT_YEAR, description="Year when car was originally sold (optional, defaults to model year)")
     
     @field_validator('fuel_type')
     @classmethod
