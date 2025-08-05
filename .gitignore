@@ -5,3 +5,6 @@
 # Training results
 training_results.json
 evaluation_results.json
+
+# AWS key
+*.pem*
