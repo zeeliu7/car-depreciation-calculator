@@ -8,7 +8,7 @@ import json
 import numpy as np
 from contextlib import asynccontextmanager
 
-from src import CarDepreciationSystem
+from car_depreciation_system import CarDepreciationSystem
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
