@@ -1,3 +1,5 @@
+.env
+
 # Model artifacts (stored in S3)
 *.pth
 *.pkl

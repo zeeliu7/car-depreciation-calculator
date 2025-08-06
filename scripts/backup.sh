@@ -15,7 +15,7 @@ aws s3 sync s3://$S3_BUCKET $BACKUP_DIR/s3_backup_$DATE/
 
 # Backup application files
 echo "Backing up application files..."
-tar -czf $BACKUP_DIR/app_backup_$DATE.tar.gz /opt/car-depreciation/src/ /opt/car-depreciation/.env
+tar -czf $BACKUP_DIR/app_backup_$DATE.tar.gz /opt/car-depreciation/ /opt/car-depreciation/.env
 
 # Clean old backups (keep last 7 days)
 echo "Cleaning old backups..."

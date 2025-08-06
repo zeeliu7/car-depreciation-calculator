@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 User=ubuntu
-WorkingDirectory=/opt/car-depreciation/src
+WorkingDirectory=/opt/car-depreciation
 Environment=PATH=/opt/car-depreciation/venv/bin
 EnvironmentFile=/opt/car-depreciation/.env
 ExecStart=/opt/car-depreciation/venv/bin/uvicorn api:app --host 0.0.0.0 --port 8000 --workers 2
