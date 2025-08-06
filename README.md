@@ -6,8 +6,18 @@ An API service that predicts your second-hand car's price with just a few factor
 - ✅ Instant depreciation constant predictions
 - ✅ 5-year future value forecasts
 - ✅ Inflation-adjusted calculations using CPI data
-- ✅ Trained on 50+ years of vehicle data
+- ✅ Trained on 50 years of vehicle data
 - ✅ Free to use, no authentication required
+
+## Contents
+- [How it works](#how-it-works)
+- [API Usage](#api-usage)
+  - [Get Depreciation Constant](#get-depreciation-constant)
+  - [Get 5-year Predictions](#get-5-year-predictions)
+  - [Donate a Case](#donate-a-case)
+  - [API Information](#api-information)
+  - [API Health Check](#api-health-check)
+- [Acknowledgements](#acknowledgements)
 
 ## How it works
 * Trained on vehicle data based on mileage, fuel type, transmission, accident history, clean title or not, and age.
