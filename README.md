@@ -102,17 +102,21 @@ curl -X POST http://car-depreciation-calculator.fyi/api/predict/future \
 Response example:
 ```json
 {
-    "data":"Future Value Predictions:
-    Original Price (2020): $25,000.00
-    Depreciation Constant: 0.061117
-    Current Value (2025): $18,417.32
-    
-    Year 2026: $17,325.42 (69.3% of original)
-    Year 2027: $16,298.25 (65.2% of original)
-    Year 2028: $15,331.99 (61.3% of original)
-    Year 2029: $14,423.00 (57.7% of original)
-    Year 2030: $13,567.91 (54.3% of original)"
+    "data": "Future Value Predictions:\nOriginal Price (2020): $25,000.00\nDepreciation Constant: 0.061117\nCurrent Value (2025): $18,417.32\n\nYear 2026: $17,325.42 (69.3% of original)\nYear 2027: $16,298.25 (65.2% of original)\nYear 2028: $15,331.99 (61.3% of original)\nYear 2029: $14,423.00 (57.7% of original)\nYear 2030: $13,567.91 (54.3% of original)"
 }
+```
+Formatted output after parsing:
+```
+Future Value Predictions:
+Original Price (2020): $25,000.00
+Depreciation Constant: 0.061117
+Current Value (2025): $18,417.32
+
+Year 2026: $17,325.42 (69.3% of original)
+Year 2027: $16,298.25 (65.2% of original)
+Year 2028: $15,331.99 (61.3% of original)
+Year 2029: $14,423.00 (57.7% of original)
+Year 2030: $13,567.91 (54.3% of original)
 ```
 
 ### Donate a case
