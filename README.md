@@ -7,6 +7,7 @@ An API service that predicts your second-hand car's price with just a few factor
 - ✅ 5-year future value forecasts
 - ✅ Inflation-adjusted calculations using CPI data
 - ✅ Trained on 50 years of vehicle data
+- ✅ High accuracy (<0.04 MAE)
 - ✅ Free to use, no authentication required
 
 ## Contents
@@ -67,7 +68,7 @@ curl -X POST http://car-depreciation-calculator.fyi/api/predict/constant \
 Response example:
 ```json
 {
-    "depreciation_constant":0.071291,
+    "depreciation_constant":0.049681,
     "model_version":"1.0.0"
 }
 ```
@@ -112,21 +113,21 @@ curl -X POST http://car-depreciation-calculator.fyi/api/predict/future \
 Response example:
 ```json
 {
-    "data": "Future Value Predictions:\nOriginal Price (2020): $25,000.00\nDepreciation Constant: 0.061117\nCurrent Value (2026): $18,417.32\n\nYear 2026: $17,325.42 (69.3% of original)\nYear 2027: $16,298.25 (65.2% of original)\nYear 2028: $15,331.99 (61.3% of original)\nYear 2029: $14,423.00 (57.7% of original)\nYear 2030: $13,567.91 (54.3% of original)"
+	"data":"Future Value Predictions:\nOriginal Price (2020): $25,000.00\nDepreciation Constant: 0.102258\nCurrent Value (2026): $13,535.68\n\nYear 2027: $12,219.97 (48.9% of original)\nYear 2028: $11,032.15 (44.1% of original)\nYear 2029: $9,959.79 (39.8% of original)\nYear 2030: $8,991.66 (36.0% of original)\nYear 2031: $8,117.64 (32.5% of original)"
 }
 ```
 Formatted output after parsing:
 ```
 Future Value Predictions:
 Original Price (2020): $25,000.00
-Depreciation Constant: 0.061117
-Current Value (2026): $18,417.32
+Depreciation Constant: 0.102258
+Current Value (2026): $13,535.68
 
-Year 2026: $17,325.42 (69.3% of original)
-Year 2027: $16,298.25 (65.2% of original)
-Year 2028: $15,331.99 (61.3% of original)
-Year 2029: $14,423.00 (57.7% of original)
-Year 2030: $13,567.91 (54.3% of original)
+Year 2027: $12,219.97 (48.9% of original)
+Year 2028: $11,032.15 (44.1% of original)
+Year 2029: $9,959.79 (39.8% of original)
+Year 2030: $8,991.66 (36.0% of original)
+Year 2031: $8,117.64 (32.5% of original)
 ```
 
 ### Donate a case
@@ -175,9 +176,9 @@ Response example:
     "success":true,
     "message":"Record inserted successfully",
     "calculated_age":6,
-    "calculated_depreciation_constant":0.072572,
-    "inflation_multiplier":1.2144,
-    "adjusted_selling_price":34003.82
+    "calculated_depreciation_constant":0.065574,
+    "inflation_multiplier":1.2434,
+    "adjusted_selling_price":34815.3
 }
 ```
 
