@@ -12,7 +12,7 @@ import random
 import json
 
 # Global variable for current year
-CURRENT_YEAR = 2025
+CURRENT_YEAR = 2026
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

@@ -18,8 +18,8 @@ def transform_csv(input_file_path):
         transformed_df['model_year'].astype(str)
     )
     
-    # Create "age" field (2025 - model_year)
-    transformed_df['age'] = 2025 - transformed_df['model_year']
+    # Create "age" field (2026 - model_year)
+    transformed_df['age'] = 2026 - transformed_df['model_year']
     
     # Convert "milage" to int using regex
     def clean_milage(milage):

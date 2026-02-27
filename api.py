@@ -28,7 +28,7 @@ def load_cpi_data() -> Dict[str, float]:
 
 # Global CPI data
 CPI_DATA = load_cpi_data()
-CURRENT_YEAR = 2025
+CURRENT_YEAR = 2026
 
 def calculate_inflation_multiplier(transaction_year: int, current_year: int = CURRENT_YEAR) -> float:
     """Calculate inflation multiplier using CPI data"""
@@ -475,7 +475,7 @@ async def predict_future_values(request: FuturePredictionRequest):
                 detail="Depreciation constant prediction failed. Please check if the model is properly trained and available."
             )
         
-        # Calculate current value (2025) from selling price using depreciation formula
+        # Calculate current value (2026) from selling price using depreciation formula
         # V(t) = V_0 * e^(-k*t) where t is years since selling year
         years_since_selling = CURRENT_YEAR - request.selling_year
         current_value = request.selling_price * np.exp(-depreciation_constant * years_since_selling)

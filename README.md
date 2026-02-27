@@ -31,7 +31,7 @@ An API service that predicts your second-hand car's price with just a few factor
 ## API usages
 Base URL: `car-depreciation-calculator.fyi`
 
-Currently all input years are limited to 1970-2025. Model trained over data between 1974-2024 in U.S. dollars. This program will be updated once 2026's CPI is available.
+Currently all input years are limited to 1970-2026. Model trained over data between 1974-2024 in U.S. dollars. This program will be updated once 2027's CPI is available.
 
 ### Get depreciation constant
 Predict the depreciation constant for a vehicle based on its characteristics. Recommended for researchers/buyers interested in depreciation rate.
@@ -48,7 +48,7 @@ Predict the depreciation constant for a vehicle based on its characteristics. Re
 * `clean_title` (string, required): Clean title status
     * Allowed values: "Yes", "No"
 * `model_year` (integer, required): Vehicle model year
-    * Limited to 1970-2025
+    * Limited to 1970-2026
 
 Example request:
 ```bash
@@ -87,11 +87,11 @@ Calculate future vehicle values for the next 5 years based on original selling p
 * `clean_title` (string, required): Clean title status
     * Allowed values: "Yes", "No"
 * `model_year` (integer, required): Vehicle model year
-    * 1970-2025 only
+    * 1970-2026 only
 * `selling_price` (number, required): Price when the car was sold (either new or second-hand)
     * Must be above 0
 * `selling_year` (integer, required): Year when car was originally sold
-    * Limited to 1970-2025
+    * Limited to 1970-2026
 
 Request example:
 ```bash
@@ -112,7 +112,7 @@ curl -X POST http://car-depreciation-calculator.fyi/api/predict/future \
 Response example:
 ```json
 {
-    "data": "Future Value Predictions:\nOriginal Price (2020): $25,000.00\nDepreciation Constant: 0.061117\nCurrent Value (2025): $18,417.32\n\nYear 2026: $17,325.42 (69.3% of original)\nYear 2027: $16,298.25 (65.2% of original)\nYear 2028: $15,331.99 (61.3% of original)\nYear 2029: $14,423.00 (57.7% of original)\nYear 2030: $13,567.91 (54.3% of original)"
+    "data": "Future Value Predictions:\nOriginal Price (2020): $25,000.00\nDepreciation Constant: 0.061117\nCurrent Value (2026): $18,417.32\n\nYear 2026: $17,325.42 (69.3% of original)\nYear 2027: $16,298.25 (65.2% of original)\nYear 2028: $15,331.99 (61.3% of original)\nYear 2029: $14,423.00 (57.7% of original)\nYear 2030: $13,567.91 (54.3% of original)"
 }
 ```
 Formatted output after parsing:
@@ -120,7 +120,7 @@ Formatted output after parsing:
 Future Value Predictions:
 Original Price (2020): $25,000.00
 Depreciation Constant: 0.061117
-Current Value (2025): $18,417.32
+Current Value (2026): $18,417.32
 
 Year 2026: $17,325.42 (69.3% of original)
 Year 2027: $16,298.25 (65.2% of original)
@@ -144,7 +144,7 @@ Donate a real case to help improve the prediction model. This endpoint calculate
 * `clean_title` (string, required): Clean title status
     * Allowed values: "Yes", "No"
 * `model_year` (integer, required): Vehicle model year
-    * 1970-2025 only
+    * 1970-2026 only
 * `selling_price` (number, required): Price when the car was sold (either new or second-hand)
     * Must be above 0
 * `current_price` (number, required): Current market value
