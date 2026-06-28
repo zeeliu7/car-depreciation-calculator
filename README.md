@@ -1,3 +1,9 @@
+# Important: this project is no longer up due to lack of server costs.
+
+The following is the previous description with URL no longer working.
+
+---
+
 # Car Depreciation Calculator: Quote Your Car's Price Instantly!
 
 An API service that predicts your second-hand car's price with just a few factors for free!
